@@ -5,9 +5,15 @@ const LocalStrategy = require("passport-local").Strategy;
 const cookieSession = require("cookie-session");
 const DB = require("./lib/db");
 const bcrypt = require("bcrypt");
+const cors = require("cors");
 
 const app = express();
-
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 const port = process.env.PORT || 2137;
 
 app.use(
