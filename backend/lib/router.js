@@ -17,6 +17,10 @@ const requeireAuth = (req, res, next) => {
 };
 
 router.post("/register", async (req, res) => {
+  if (req.isAuthenticated()) {
+    req.logout();
+  }
+
   try {
     const { firstName, lastName, email, password } = req.body;
 
@@ -58,7 +62,12 @@ router.post("/register", async (req, res) => {
     user.save();
     res.status(201).json(user);
   } catch (error) {
-    throw new Error(error);
+    console.log(error);
+    res.status(500).json({
+      timestamp: Date.now(),
+      message: "Failed to register user. Internal server error",
+      code: 500,
+    });
   }
 });
 
@@ -124,8 +133,10 @@ router.get("/user", requeireAuth, async (req, res) => {
   }
 });
 
-router.delete("/logout", async (req, res) => {
+router.delete("/logout", async (req, res, next) => {
   try {
+    req.logout();
+
     res.status(200).json({
       timestamp: Date.now(),
       msg: "User logged out successfully",

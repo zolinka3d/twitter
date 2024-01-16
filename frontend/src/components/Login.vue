@@ -2,7 +2,8 @@
 
     <!-- simple form for username, password and button submit -->
     
-    <form class="m-2">
+    <form class="m-2" @submit.prevent="handleSubmit">
+        <error v-if="error" :error="error" />
         <h1>Login</h1>
         <div class="form-group ">
             <label for="username">Username</label>
@@ -10,7 +11,7 @@
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="text" v-model="password" class="form-control" id="password" placeholder="Enter password">
+            <input type="password" v-model="password" class="form-control" id="password" placeholder="Enter password">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
@@ -18,12 +19,39 @@
 
 
 <script>
+    import axios from 'axios';
+    import Error from './Error.vue';
+
     export default {
         name: 'Login',
+        components: {
+            Error
+        },
         data() {
             return {
                 username: '',
-                password: ''
+                password: '',
+                error: ''
+            }
+        },
+        methods: {
+            async handleSubmit() {
+                try {
+                    const data = {
+                    username: this.username,
+                    password: this.password
+                    }
+
+                    const response = await axios.post('api/login', data);
+
+                    // localStorage.setItem('token', response.data.access_token)
+                    const userResponse = await axios.get('api/user')
+                    this.$store.dispatch("user", userResponse.data.user)
+                    this.$router.push('/')
+                } catch (error) {
+                    this.error = 'Invalid usernare or password'
+                }
+                
             }
         }
     }
