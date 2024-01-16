@@ -3,6 +3,8 @@ const router = require("./lib/router");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const cookieSession = require("cookie-session");
+const DB = require("./lib/db");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -22,19 +24,47 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser((user, done) => {
-  console.log(`4 - serializeUser ${JSON.stringify(user)}`);
+  console.log(`4 - serializeUser ${JSON.stringify(user.id)}`);
   return done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  console.log(`5 - deserializeUser ${id}`);
+  let user = DB.findOne(id);
+  if (user) {
+    return done(null, { id: user.id, email: user.email });
+  } else {
+    return done(new Error("User not found"));
+    // return done(null, false);
+  }
 });
 
 passport.use(
   "local",
   new LocalStrategy(
     { passReqToCallback: true },
-    (req, username, password, done) => {
-      console.log("2 - local strategy verify cb!!!!");
-      // this is where we call db
-      // to verify the user
-      return done(null, { id: "test" });
+    async (req, username, password, done) => {
+      console.log(`2 - local strategy verify cb ${JSON.stringify(username)}`);
+
+      let user = DB.findByEmail(username);
+
+      if (!user) {
+        return done(null, false);
+      }
+
+      // compare password to stored password false of true
+      const result = await new Promise((resolve, reject) => {
+        bcrypt.compare(password, user.security.passwordHash, (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        });
+      });
+
+      if (result) {
+        return done(null, user);
+      } else {
+        return done("password or username incorrect. please try again", null);
+      }
     }
   )
 );

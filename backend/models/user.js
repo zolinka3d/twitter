@@ -24,7 +24,7 @@ let _ = class User {
   save() {
     // save user to database
     console.log(`User ${this.id} saved to database`);
-    DB.write({ data: "hello" });
+    DB.write(this);
   }
 
   find(id) {
