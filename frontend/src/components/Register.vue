@@ -55,7 +55,7 @@ export default {
                        
            this.$router.push('/login')
         } catch (error) {
-            this.error = 'An error occurred'
+            this.error = error.response.data.msg;
         }
         }
     }

@@ -52,7 +52,7 @@ export default {
                 this.$store.dispatch("user", response.data.user)
                 this.$router.push('/profile')
             } catch (error) {
-                this.error = 'Something went wrong'
+                this.error = error.response.data.msg;
             }
         }
     }

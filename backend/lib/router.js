@@ -3,6 +3,13 @@ const User = require("../models/MongoUser");
 let router = express.Router();
 const passport = require("passport");
 const bcrypt = require("bcrypt");
+const yup = require("yup");
+const {
+  userSchema,
+  usernameSchema,
+  emailSchema,
+  passwordSchema,
+} = require("../validation/validationSchema");
 
 const requeireAuth = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -23,6 +30,9 @@ router.post("/register", async (req, res) => {
 
   try {
     const { username, email, password } = req.body;
+
+    await userSchema.validate({ username, email, password });
+
     const passwordHash = await bcrypt.hash(password, 10);
     try {
       const user = await User.create({
@@ -40,17 +50,32 @@ router.post("/register", async (req, res) => {
       });
     } catch (error) {
       if (error.code === 11000) {
-        return res.status(400).json({
-          timestamp: Date.now(),
-          msg: "User with this email already exists",
-          code: 400,
-        });
+        if (error.keyValue.username) {
+          return res.status(400).json({
+            timestamp: Date.now(),
+            msg: "Username already exists",
+            code: 400,
+          });
+        } else if (error.keyValue.email) {
+          return res.status(400).json({
+            timestamp: Date.now(),
+            msg: "Email already exists",
+            code: 400,
+          });
+        }
       }
 
       console.error(new Error(error));
     }
   } catch (error) {
     console.log(error);
+    if (error instanceof yup.ValidationError) {
+      return res.status(400).json({
+        timestamp: Date.now(),
+        msg: error.message,
+        code: 400,
+      });
+    }
     res.status(500).json({
       timestamp: Date.now(),
       message: "Failed to register user. Internal server error",
@@ -154,17 +179,25 @@ router.get("/users", async (req, res) => {
 router.put("/profile", requeireAuth, async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    const updates = {};
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      {
-        username,
-        email,
-        password: passwordHash,
-      },
-      { new: true }
-    );
+    if (username !== "") {
+      await usernameSchema.validate({ username });
+      updates.username = username;
+    }
+    if (email !== "") {
+      await emailSchema.validate({ email });
+      updates.email = email;
+    }
+    if (password !== "") {
+      await passwordSchema.validate({ password });
+      const passwordHash = await bcrypt.hash(password, 10);
+      updates.password = passwordHash;
+    }
+
+    const user = await User.findByIdAndUpdate(req.user.id, updates, {
+      new: true,
+    });
 
     res.status(200).json({
       user: {
@@ -175,7 +208,16 @@ router.put("/profile", requeireAuth, async (req, res) => {
       },
     });
   } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return res.status(400).json({
+        timestamp: Date.now(),
+        msg: error.message,
+        code: 400,
+      });
+    }
+
     console.error(new Error(error));
+
     res.status(500).json({
       timestamp: Date.now(),
       msg: "Failed to update user. Internal server error",
