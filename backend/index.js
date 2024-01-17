@@ -1,5 +1,6 @@
 const express = require("express");
-const router = require("./lib/router");
+const { userRouter } = require("./router/userRouter");
+const { followerRouter } = require("./router/followersRouter");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const cookieSession = require("cookie-session");
@@ -78,8 +79,8 @@ passport.use(
     }
   )
 );
-
-app.use("/api", router);
+app.use("/api/followers", followerRouter);
+app.use("/api", userRouter);
 
 mongoose
   .connect(

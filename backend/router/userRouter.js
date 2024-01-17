@@ -10,18 +10,7 @@ const {
   emailSchema,
   passwordSchema,
 } = require("../validation/validationSchema");
-
-const requeireAuth = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    return res.status(403).json({
-      timestamp: Date.now(),
-      msg: "Access denied. Unauthorised user.",
-      code: 403,
-    });
-  }
-};
+const requeireAuth = require("../middleware/requireAuth");
 
 router.post("/register", async (req, res) => {
   if (req.isAuthenticated()) {
@@ -267,4 +256,5 @@ router.all("*", async (req, res) => {
   }
 });
 
-module.exports = router;
+// router as userRouter
+module.exports = { userRouter: router };
