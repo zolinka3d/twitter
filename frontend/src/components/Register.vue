@@ -3,12 +3,8 @@
         <h1>Register</h1>
         <error v-if="error" :error="error" />
         <div class="form-group">
-            <label for="firstname">First Name</label>
-            <input type="text" v-model="firstname" class="form-control" id="firstname" placeholder="Enter first name">
-        </div>
-        <div class="form-group">
-            <label for="lastname">Last Name</label>
-            <input type="text" v-model="lastname" class="form-control" id="lastname" placeholder="Enter last name">
+            <label for="username">Username</label>
+            <input type="text" v-model="username" class="form-control" id="username" placeholder="Enter username">
         </div>
         <div class="form-group ">
             <label for="email">Email</label>
@@ -39,8 +35,7 @@ export default {
     },
     data() {
         return {
-            firstname: '',
-            lastname: '',
+            username: '',
             email: '',
             password: '',
             password2: '',
@@ -51,8 +46,7 @@ export default {
         async handleSubmit() {
             
             try {const data = {
-                firstName: this.firstname,
-                lastName: this.lastname,
+                username: this.username,
                 email: this.email,
                 password: this.password,
             }

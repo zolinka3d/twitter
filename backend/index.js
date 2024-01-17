@@ -3,9 +3,13 @@ const router = require("./lib/router");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const cookieSession = require("cookie-session");
+require("dotenv").config();
 const DB = require("./lib/db");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
+const mongoose = require("mongoose");
+const dbConnData = require("./config/db");
+const User = require("./models/MongoUser");
 
 const app = express();
 app.use(
@@ -34,9 +38,11 @@ passport.serializeUser((user, done) => {
   return done(null, user.id);
 });
 
-passport.deserializeUser((id, done) => {
+passport.deserializeUser(async (id, done) => {
   console.log(`5 - deserializeUser ${id}`);
-  let user = DB.findOne(id);
+
+  const user = await User.findById(id);
+
   if (user) {
     return done(null, { id: user.id, email: user.email });
   } else {
@@ -52,15 +58,15 @@ passport.use(
     async (req, username, password, done) => {
       console.log(`2 - local strategy verify cb ${JSON.stringify(username)}`);
 
-      let user = DB.findByEmail(username);
-
+      const user = await User.findOne({ username: username });
+      console.log(user);
       if (!user) {
         return done(null, false);
       }
 
       // compare password to stored password false of true
       const result = await new Promise((resolve, reject) => {
-        bcrypt.compare(password, user.security.passwordHash, (err, result) => {
+        bcrypt.compare(password, user.password, (err, result) => {
           if (err) reject(err);
           resolve(result);
         });
@@ -77,11 +83,19 @@ passport.use(
 
 app.use("/api", router);
 
-try {
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}.`);
-  });
-} catch (error) {
-  console.log("Server is not running.");
-  console.log(error);
-}
+mongoose
+  .connect(
+    `mongodb://${dbConnData.host}:${dbConnData.port}/${dbConnData.database}`,
+    {}
+  )
+  .then((response) => {
+    console.log(
+      `Connected to MongoDB. Database name: "${response.connections[0].name}"`
+    );
+    const apiPort = process.env.PORT || 8000;
+    const apiHost = process.env.API_HOST || "localhost";
+    app.listen(apiPort, () => {
+      console.log(`API server available from: http://${apiHost}:${apiPort}`);
+    });
+  })
+  .catch((error) => console.error("Error connecting to MongoDB", error));

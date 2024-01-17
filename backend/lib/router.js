@@ -1,8 +1,8 @@
 const express = require("express");
-const User = require("../models/user");
+const User = require("../models/MongoUser");
 let router = express.Router();
 const passport = require("passport");
-const DB = require("../lib/db");
+const bcrypt = require("bcrypt");
 
 const requeireAuth = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -22,45 +22,33 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    const { firstName, lastName, email, password } = req.body;
-
-    let user = new User();
-    let msg = false;
-    msg = user.setFirstName(firstName);
-    if (msg)
-      return res.status(400).json({
-        type: "firstName",
-        message: msg,
-        code: 400,
+    const { username, email, password } = req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+    try {
+      const user = await User.create({
+        username,
+        email,
+        password: passwordHash,
       });
 
-    msg = user.setLastName(lastName);
-    if (msg)
-      return res.status(400).json({
-        type: "lastName",
-        message: msg,
-        code: 400,
+      res.status(201).json({
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
       });
+    } catch (error) {
+      if (error.code === 11000) {
+        return res.status(400).json({
+          timestamp: Date.now(),
+          msg: "User with this email already exists",
+          code: 400,
+        });
+      }
 
-    msg = user.setEmail(email);
-    if (msg)
-      return res.status(400).json({
-        type: "email",
-        message: msg,
-        code: 400,
-      });
-
-    msg = await user.setPassword(password);
-    if (msg)
-      return res.status(400).json({
-        type: "password",
-        message: msg,
-        code: 400,
-      });
-
-    // everything is ok
-    user.save();
-    res.status(201).json(user);
+      console.error(new Error(error));
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -108,7 +96,8 @@ router.get("/user", requeireAuth, async (req, res) => {
   try {
     console.log("test");
 
-    const user = DB.findOne(req.user?.id);
+    const user = await User.findById(req.user.id);
+    console.log(user);
     if (!user)
       return res.status(404).json({
         timestamp: Date.now(),
@@ -119,7 +108,7 @@ router.get("/user", requeireAuth, async (req, res) => {
     res.status(200).json({
       user: {
         id: user.id,
-        name: user.name,
+        username: user.username,
         email: user.email,
       },
     });
@@ -144,6 +133,20 @@ router.delete("/logout", async (req, res, next) => {
     });
   } catch (error) {
     throw new Error(error);
+  }
+});
+
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(500).json({
+      timestamp: Date.now(),
+      msg: "Failed to get users. Internal server error",
+      code: 500,
+    });
   }
 });
 
