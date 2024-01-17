@@ -110,6 +110,7 @@ router.get("/user", requeireAuth, async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
+        avatar: user.avatar,
       },
     });
   } catch (error) {
@@ -145,6 +146,68 @@ router.get("/users", async (req, res) => {
     res.status(500).json({
       timestamp: Date.now(),
       msg: "Failed to get users. Internal server error",
+      code: 500,
+    });
+  }
+});
+
+router.put("/profile", requeireAuth, async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        username,
+        email,
+        password: passwordHash,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(500).json({
+      timestamp: Date.now(),
+      msg: "Failed to update user. Internal server error",
+      code: 500,
+    });
+  }
+});
+
+router.put("/profile/avatar", requeireAuth, async (req, res) => {
+  try {
+    const { avatar } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        avatar,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(500).json({
+      timestamp: Date.now(),
+      msg: "Failed to update user. Internal server error",
       code: 500,
     });
   }

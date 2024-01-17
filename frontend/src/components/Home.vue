@@ -1,28 +1,17 @@
 <template>
-    <h1 v-if="!user">
-        You are not logged in
-    </h1>
-    <div v-else class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h3>Username</h3>
-                <p>{{ user.username }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <h3>Email</h3>
-                <p>{{ user.email }}</p>
-            </div>
-        </div>
-    </div>
+    
+    <UploadWidget />
 </template>
 
 <script>
     import {mapGetters} from 'vuex';
+    import UploadWidget from './UploadWidget.vue';
 
     export default {
         name: 'Home',
+        components: {
+            UploadWidget
+        },
         computed: {
         ...mapGetters(['user'])
         }

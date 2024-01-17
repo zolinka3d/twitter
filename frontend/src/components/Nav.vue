@@ -7,6 +7,7 @@
         <router-link to="/register" class="nav-link text-light">Register</router-link>
     </div>
     <div class="d-flex" v-else>
+        <router-link to="/profile" class="nav-link text-light">Profile</router-link>
         <a href="#" @click="handleClick" class="nav-link text-light">Logout</a >
     </div>
 </nav>

@@ -4,7 +4,6 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const cookieSession = require("cookie-session");
 require("dotenv").config();
-const DB = require("./lib/db");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -14,11 +13,10 @@ const User = require("./models/MongoUser");
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONT_URL,
     credentials: true,
   })
 );
-const port = process.env.PORT || 2137;
 
 app.use(
   cookieSession({
@@ -92,10 +90,10 @@ mongoose
     console.log(
       `Connected to MongoDB. Database name: "${response.connections[0].name}"`
     );
-    const apiPort = process.env.PORT || 8000;
+    const port = process.env.PORT || 2137;
     const apiHost = process.env.API_HOST || "localhost";
-    app.listen(apiPort, () => {
-      console.log(`API server available from: http://${apiHost}:${apiPort}`);
+    app.listen(port, () => {
+      console.log(`API server available from: http://${apiHost}:${port}`);
     });
   })
   .catch((error) => console.error("Error connecting to MongoDB", error));
