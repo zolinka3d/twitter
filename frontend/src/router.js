@@ -2,9 +2,11 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "./components/Home.vue";
 import Login from "./components/Login.vue";
 import Register from "./components/Register.vue";
-import Profile from "./components/Profile.vue";
+import Profile from "./components/profile/Profile.vue";
 import ProfileUpdate from "./components/ProfileUpdate.vue";
 import UploadWidget from "./components/UploadWidget.vue";
+import Friends from "./components/friends/Friends.vue";
+import FriendProfile from "./components/profile/FriendProfile.vue";
 
 const routes = [
   {
@@ -36,6 +38,16 @@ const routes = [
     path: "/profile/update/avatar",
     name: "UploadWidget",
     component: UploadWidget,
+  },
+  {
+    path: "/friends",
+    name: "Friends",
+    component: Friends,
+  },
+  {
+    path: "/profile/:username",
+    name: "FriendProfile",
+    component: FriendProfile,
   },
 ];
 const router = createRouter({

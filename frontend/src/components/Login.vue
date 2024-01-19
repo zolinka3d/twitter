@@ -47,6 +47,10 @@
                     // localStorage.setItem('token', response.data.access_token)
                     const userResponse = await axios.get('api/user')
                     this.$store.dispatch("user", userResponse.data.user)
+
+                    const friendsResponse = await axios.get('api/followers')
+                    this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})
+
                     this.$router.push('/')
                 } catch (error) {
                     this.error = 'Invalid usernare or password'

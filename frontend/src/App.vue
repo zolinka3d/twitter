@@ -22,6 +22,9 @@ export default {
         async created() {
             const response = await axios.get('api/user')
             this.$store.dispatch("user", response.data.user)
+            
+            const friendsResponse = await axios.get('api/followers')
+            this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})
         }
 }
 </script>

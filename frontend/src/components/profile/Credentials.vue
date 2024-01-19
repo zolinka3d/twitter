@@ -1,15 +1,12 @@
 <template>
- <h1 v-if="!user">
-        You are not logged in
-    </h1>
-    <div v-else class="container">
+    <div>
         <div class="row">
             <div class="col-md-6">
                 <h3>Username</h3>
                 <p>{{ user.username }}</p>
             </div>
         </div>
-        <div class="row">
+        <div class="row" v-if="user.email">
             <div class="col-md-6">
                 <h3>Email</h3>
                 <p>{{ user.email }}</p>
@@ -22,19 +19,30 @@
                 <p v-else>No avatar</p>
             </div>
         </div>
-        <router-link to="/profile/update" class="btn btn-primary mt-2">Update Profile</router-link>
     </div>
+
 </template>
 
 
 <script>
-    import {mapGetters} from 'vuex';
-
     export default {
-        name: 'Profile',
-        computed: {
-        ...mapGetters(['user'])
+        name: 'Credentials',
+        props: {
+            user: {
+                type: Object,
+                required: true
+            }
         }
     }
-    
+
 </script>
+
+
+<style scoped>
+
+.img {
+    width: 100px;
+    height: 100px;
+    
+}
+</style>

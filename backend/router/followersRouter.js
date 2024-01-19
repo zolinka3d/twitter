@@ -7,8 +7,17 @@ router.get("/", requeireAuth, async (req, res) => {
   const { id } = req.user;
 
   try {
-    const user = await User.findById(id).populate("followers");
-    const followers = user.followers.map((user) => {
+    let user = await User.findById(id).populate("followers");
+    let followers = user.followers.map((user) => {
+      return {
+        id: user.id,
+        username: user.username,
+        avatar: user.avatar,
+      };
+    });
+
+    user = await User.findById(id).populate("following");
+    const following = user.following.map((user) => {
       return {
         id: user.id,
         username: user.username,
@@ -22,6 +31,7 @@ router.get("/", requeireAuth, async (req, res) => {
         name: user.name,
         email: user.email,
         followers: followers,
+        following: following,
       },
     });
   } catch (error) {
@@ -55,8 +65,8 @@ router.get("/following", requeireAuth, async (req, res) => {
   }
 });
 
-router.post("/", requeireAuth, async (req, res) => {
-  const { username } = req.body;
+router.post("/:username", requeireAuth, async (req, res) => {
+  const { username } = req.params;
 
   try {
     const me = await User.findById(req.user.id);
@@ -89,6 +99,111 @@ router.post("/", requeireAuth, async (req, res) => {
     });
   } catch (error) {
     console.error(new Error(error));
+  }
+});
+
+router.delete("/:username", requeireAuth, async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const me = await User.findById(req.user.id);
+    const requestedUser = await User.findOne({ username: username });
+
+    if (!requestedUser) {
+      return res.status(400).json({
+        timestamp: Date.now(),
+        msg: "User not found",
+        code: 400,
+      });
+    }
+    if (!me.following.includes(requestedUser.id)) {
+      return res.status(400).json({
+        timestamp: Date.now(),
+        msg: "Not following",
+        code: 400,
+      });
+    }
+    me.following.pull(requestedUser.id);
+    requestedUser.followers.pull(me.id);
+
+    await me.save();
+    await requestedUser.save();
+
+    console.log(me.following);
+    console.log(requestedUser.followers);
+
+    res.json({
+      msg: "Unfollowed",
+    });
+  } catch (error) {
+    console.error(new Error(error));
+
+    res.status(400).json({
+      msg: "Error",
+    });
+  }
+});
+
+// find users by name
+router.get("/search", async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    const users = await User.find({
+      username: { $regex: username, $options: "i" },
+    });
+    const usersList = users.map((user) => {
+      return {
+        id: user.id,
+        username: user.username,
+        avatar: user.avatar,
+      };
+    });
+    res.status(200).json({
+      users: usersList,
+    });
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(400).json({
+      msg: "Error",
+    });
+  }
+});
+
+// find user by username
+router.get("/profile/:username", async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      return res.status(400).json({
+        timestamp: Date.now(),
+        msg: "User not found",
+        code: 400,
+      });
+    } else {
+      const isFollowingMe = user.following.includes(req.user.id);
+      const amIFollowing = user.followers.includes(req.user.id);
+      console.log(isFollowingMe);
+      console.log(amIFollowing);
+      res.status(200).json({
+        user: {
+          id: user.id,
+          username: user.username,
+          avatar: user.avatar,
+          followersLength: user.followers.length,
+          followingLength: user.following.length,
+          isFollowingMe: isFollowingMe,
+          amIFollowing: amIFollowing,
+        },
+      });
+    }
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(400).json({
+      msg: "Error",
+    });
   }
 });
 
