@@ -7,12 +7,14 @@
                 <button v-else class="btn btn-primary" @click="follow">Follow</button>
             </div>
         </div>
+        <Posts :posts="otherUser.posts" v-if="otherUser.posts.length > 0"/>
     </div>
     <h1 v-else>User not found</h1>
 </template>
 
 <script>
 import Credentials from './Credentials.vue';
+import Posts from '../posts/Posts.vue';
 import axios from 'axios';
 import {mapGetters} from 'vuex';
 
@@ -25,7 +27,8 @@ export default {
         }
     },
     components: {
-        Credentials
+        Credentials,
+        Posts,
     },
     computed: {
         ...mapGetters(['user']),

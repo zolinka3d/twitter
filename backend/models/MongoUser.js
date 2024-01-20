@@ -8,6 +8,7 @@ const userSchema = new Schema({
   following: [{ type: Schema.Types.ObjectId, ref: "User" }],
   followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
   registrationDate: Date,
+  posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
 });
 
 module.exports = model("User", userSchema);

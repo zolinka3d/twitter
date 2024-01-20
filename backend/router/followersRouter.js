@@ -2,6 +2,7 @@ const express = require("express");
 let router = express.Router();
 const requeireAuth = require("../middleware/requireAuth");
 const User = require("../models/MongoUser");
+const Post = require("../models/MongoPost");
 
 router.get("/", requeireAuth, async (req, res) => {
   const { id } = req.user;
@@ -185,8 +186,55 @@ router.get("/profile/:username", async (req, res) => {
     } else {
       const isFollowingMe = user.following.includes(req.user.id);
       const amIFollowing = user.followers.includes(req.user.id);
-      console.log(isFollowingMe);
-      console.log(amIFollowing);
+      // const posts = await Post.find({ user_id: user.id })
+      //   .map(async (post) => {
+      //     let user = await User.findById(post.user_id);
+      //     let quote = post.quote_id ? await Post.findById(post.quote_id) : null;
+      //     let reference = post.reference_id
+      //       ? await Post.findById(post.reference_id)
+      //       : null;
+      //     return {
+      //       id: post.id,
+      //       text: post.text,
+      //       user: {
+      //         id: user.id,
+      //         username: user.username,
+      //         avatar: user.avatar,
+      //       },
+      //       comments: post.comments,
+      //       date: post.date,
+      //       quote: quote,
+      //       reference: reference,
+      //     };
+      //   })
+      // .sort({ date: -1 });
+      const posts = await Post.find({ user_id: user.id }).sort({ date: -1 });
+      const postDetails = await Promise.all(
+        posts.map(async (post) => {
+          let userData = await User.findById(post.user_id);
+          let quoteData = post.quote_id
+            ? await Post.findById(post.quote_id)
+            : null;
+          let referenceData = post.reference_id
+            ? await Post.findById(post.reference_id)
+            : null;
+
+          return {
+            id: post.id,
+            text: post.text,
+            user: {
+              id: userData.id,
+              username: userData.username,
+              avatar: userData.avatar,
+            },
+            comments: post.comments,
+            date: post.date,
+            quote: quoteData,
+            reference: referenceData,
+          };
+        })
+      );
+
       res.status(200).json({
         user: {
           id: user.id,
@@ -196,6 +244,7 @@ router.get("/profile/:username", async (req, res) => {
           followingLength: user.following.length,
           isFollowingMe: isFollowingMe,
           amIFollowing: amIFollowing,
+          posts: postDetails,
         },
       });
     }
