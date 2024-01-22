@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/MongoUser");
+const Post = require("../models/MongoPost");
 let router = express.Router();
 const passport = require("passport");
 const bcrypt = require("bcrypt");
@@ -11,6 +12,8 @@ const {
   passwordSchema,
 } = require("../validation/validationSchema");
 const requeireAuth = require("../middleware/requireAuth");
+const { fetchPostDetails } = require("../utils/postDetails");
+const { fetchQuoteData } = require("../utils/postDetails");
 
 router.post("/register", async (req, res) => {
   if (req.isAuthenticated()) {
@@ -108,23 +111,25 @@ router.post("/login", (req, res, next) => {
 
 router.get("/user", requeireAuth, async (req, res) => {
   try {
-    console.log("test");
+    // console.log("test");
 
     const user = await User.findById(req.user.id);
-    console.log(user);
+    // console.log(user);
     if (!user)
       return res.status(404).json({
         timestamp: Date.now(),
         msg: "User not found",
         code: 404,
       });
-
+    let posts = await Post.find({ user_id: user.id }).sort({ date: -1 });
+    const postDetails = await fetchPostDetails(posts);
     res.status(200).json({
       user: {
         id: user.id,
         username: user.username,
         email: user.email,
         avatar: user.avatar,
+        posts: postDetails,
       },
     });
   } catch (error) {

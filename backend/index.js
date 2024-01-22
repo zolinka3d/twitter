@@ -12,6 +12,12 @@ const mongoose = require("mongoose");
 const dbConnData = require("./config/db");
 const User = require("./models/MongoUser");
 
+const sessionMiddleware = cookieSession({
+  name: "app-auth",
+  keys: ["secret-new", "secret-old"],
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+});
+
 const app = express();
 app.use(
   cors({
@@ -19,14 +25,54 @@ app.use(
     credentials: true,
   })
 );
+app.use(sessionMiddleware);
 
-app.use(
-  cookieSession({
-    name: "app-auth",
-    keys: ["secret-new", "secret-old"],
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  })
-);
+// socket.io
+const http = require("http");
+const { Server } = require("socket.io");
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONT_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+const wrap = (middleware) => (socket, next) =>
+  middleware(socket.request, {}, next);
+
+io.use(wrap(sessionMiddleware));
+io.use(wrap(passport.initialize()));
+io.use(wrap(passport.session()));
+
+// io.use((socket, next) => {
+//   const session = socket.request.session;
+//   if (session && session.passport && session.passport.user) {
+//     next();
+//   } else {
+//     next(new Error("Unauthorized"));
+//   }
+// });
+io.use(async (socket, next) => {
+  const session = socket.request.session;
+  if (session && session.passport && session.passport.user) {
+    const userId = session.passport.user;
+    const user = await User.findById(userId); // Znajdź użytkownika w bazie danych
+    if (user) {
+      socket.user = user; // Przypisz obiekt usera do socketu
+      next();
+    } else {
+      next(new Error("User not found"));
+    }
+  } else {
+    next(new Error("Unauthorized"));
+  }
+});
+
+const socketManager = require("./listeners/socketManager");
+
+socketManager(io);
 
 app.use(express.json());
 
@@ -95,7 +141,7 @@ mongoose
     );
     const port = process.env.PORT || 2137;
     const apiHost = process.env.API_HOST || "localhost";
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`API server available from: http://${apiHost}:${port}`);
     });
   })

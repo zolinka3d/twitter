@@ -47,6 +47,7 @@
                     // localStorage.setItem('token', response.data.access_token)
                     const userResponse = await axios.get('api/user')
                     this.$store.dispatch("user", userResponse.data.user)
+                    this.$store.dispatch("myPosts", userResponse.data.user.posts)
 
                     const friendsResponse = await axios.get('api/followers')
                     this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})

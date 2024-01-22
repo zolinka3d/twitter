@@ -49,7 +49,13 @@ export default {
                     email: this.email
                 }
                 const response = await axios.put('api/profile', data);
-                this.$store.dispatch("user", response.data.user)
+                const posts = this.$store.state.user.posts
+                this.$store.dispatch("user", {
+                    username: response.data.user.username,
+                    email: response.data.user.email,
+                    avatar: response.data.user.avatar,
+                    posts: posts
+                });
                 this.$router.push('/profile')
             } catch (error) {
                 this.error = error.response.data.msg;

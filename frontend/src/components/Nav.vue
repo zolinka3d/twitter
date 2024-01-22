@@ -1,6 +1,6 @@
 <template>
 <nav class="navbar navbar-expand-lg bg-primary justify-content-between mb-2">
-    <router-link to="/" class="navbar-brand text-light">Home</router-link>
+    <router-link to="/" class="navbar-brand text-light">Y</router-link>
 
     <div class="d-flex" v-if="!user">
         <router-link to="/login" class="nav-link text-light">Login</router-link>

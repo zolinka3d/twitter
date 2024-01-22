@@ -1,7 +1,7 @@
 <template>
-    <div v-if="otherUser">
+    <div v-if="otherUser && otherUser !== 'loading'">
         <Credentials v-if="otherUser" :user="otherUser" class="mb-2"/>
-        <div class="d-flex" v-if="otherUser">
+        <div class="d-flex mb-2" v-if="otherUser">
             <div>
                 <button v-if="otherUser.amIFollowing" class="btn btn-primary" @click="unfollow">Unfollow</button>
                 <button v-else class="btn btn-primary" @click="follow">Follow</button>
@@ -9,6 +9,7 @@
         </div>
         <Posts :posts="otherUser.posts" v-if="otherUser.posts.length > 0"/>
     </div>
+    <h1 v-else-if="otherUser === 'loading'">Loading...</h1>
     <h1 v-else>User not found</h1>
 </template>
 
@@ -23,7 +24,7 @@ export default {
 
     data(){
         return {
-            otherUser: null,
+            otherUser: "loading",
         }
     },
     components: {
@@ -39,17 +40,15 @@ export default {
     async mounted(){
         try{
             const response = await axios.get(`api/followers/profile/${this.username}`);
-            // console.log(response.data);
             this.otherUser = response.data.user;
         }catch(error){
             console.log(error);
+            this.otherUser = null;
         }
     },
-    watch:{
-        user(newValue, oldValue){
-            if(newValue && newValue.username === this.username){
-                this.$router.push({name: 'Profile'});
-            }
+    created(){
+        if(this.user && this.user.username === this.username){
+            this.$router.push({name: 'Profile'});
         }
     },
     methods: {

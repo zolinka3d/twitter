@@ -7,6 +7,7 @@ import ProfileUpdate from "./components/ProfileUpdate.vue";
 import UploadWidget from "./components/UploadWidget.vue";
 import Friends from "./components/friends/Friends.vue";
 import FriendProfile from "./components/profile/FriendProfile.vue";
+import PostWithReference from "./components/posts/PostWithReference.vue";
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: "/profile/:username",
     name: "FriendProfile",
     component: FriendProfile,
+  },
+  {
+    path: "/post/:id",
+    name: "PostWithReference",
+    component: PostWithReference,
   },
 ];
 const router = createRouter({

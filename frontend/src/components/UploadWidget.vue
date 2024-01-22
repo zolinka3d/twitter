@@ -44,8 +44,13 @@ export default {
                         avatar: this.avatar
                     };
                     const response = await axios.put('api/profile/avatar', data);
-                    console.log(response);
-                    this.$store.dispatch("user", response.data.user);
+                    const posts = this.$store.state.user.posts
+                    this.$store.dispatch("user", {
+                    username: response.data.user.username,
+                    email: response.data.user.email,
+                    avatar: response.data.user.avatar,
+                    posts: posts
+                });
                     this.$router.push('/profile');
                 } catch (error) {
                     console.log(error);
@@ -64,7 +69,7 @@ export default {
                             this.avatar = result.info.secure_url;
                             break;
                         default:
-                            console.log("close")
+                            
                             break;
                     }
                 }
