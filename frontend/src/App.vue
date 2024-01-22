@@ -3,7 +3,7 @@
 <template>
   <Nav />
   <div class="container">
-
+    <Alert :username="alertUsername" v-if="showAlert" class="alert"/>
         <router-view ></router-view>
       
     </div>
@@ -14,9 +14,16 @@
 import Nav from './components/Nav.vue';
 import axios from 'axios';
 import { inject } from 'vue';
+import Alert from './components/Alert.vue';
 
 export default {
   name: 'App',
+  data() {
+    return {
+      showAlert: false,
+      alertUsername: '',
+    };
+  },
   setup() {
     return {
       socket: inject('socket'),
@@ -24,14 +31,18 @@ export default {
   },
   components: {
     Nav,
+    Alert,
   },
         async created() {
             this.socket.on('connect', () => {
                 console.log('connected');
             });
             this.socket.on('post', (msg) => {
-                // this.fetchPosts();
-                console.log('post received from', msg.from);
+                this.alertUsername = msg.from;
+                this.showAlert = true;
+                setTimeout(() => {
+                    this.showAlert = false;
+                }, 3000);
             });
             const response = await axios.get('api/user')
             this.$store.dispatch("user", response.data.user)
@@ -45,5 +56,11 @@ export default {
 </script>
 
 <style>
+.alert{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;}
 
 </style>

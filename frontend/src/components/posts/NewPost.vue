@@ -31,26 +31,24 @@ export default {
             console.log('connected');
         });
 
-        this.socket.on('chat message', (msg) => {
-            console.log('Message received:', msg);
-        });
+        // this.socket.on('chat message', (msg) => {
+        //     console.log('Message received:', msg);
+        // });
     }, 
     methods: {
         async newPost() {
             try {
-                // const response = await axios.post('/api/posts/', {
-                //     text: this.content,
-                //     quote_id: null,
-                //     reference_id: null,
-                // });
-
-                // this.socket.emit('chat message', this.content);
+                const response = await axios.post('/api/posts/', {
+                    text: this.content,
+                    quote_id: null,
+                    reference_id: null,
+                });
                 this.socket.emit("post");
 
                 this.content = '';
 
-                // this.$store.dispatch('posts', [response.data.post, ...this.$store.getters.posts]);
-                // this.$store.dispatch('myPosts', [response.data.post, ...this.$store.getters.myPosts]);
+                this.$store.dispatch('posts', [response.data.post, ...this.$store.getters.posts]);
+                this.$store.dispatch('myPosts', [response.data.post, ...this.$store.getters.myPosts]);
             } catch (error) {
                 console.log(error);
                 this.content = '';

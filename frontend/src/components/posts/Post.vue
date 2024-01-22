@@ -80,9 +80,6 @@ export default {
 .header {
     display: flex;
     justify-content: space-between;
-    /* align-items: center; */
-    /* margin-bottom: 1rem; */
-
 }
 .user {
     display: flex;
