@@ -16,6 +16,8 @@ const sessionMiddleware = cookieSession({
   name: "app-auth",
   keys: ["secret-new", "secret-old"],
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  secure: true,
+  sameSite: "none",
 });
 
 const app = express();
@@ -29,8 +31,20 @@ app.use(sessionMiddleware);
 
 // socket.io
 const http = require("http");
+
+const https = require("https");
+const fs = require("fs");
+const path = require("path");
+
 const { Server } = require("socket.io");
-const server = http.createServer(app);
+// const server = http.createServer(app);
+const server = https.createServer(
+  {
+    key: fs.readFileSync(path.join(__dirname, "cert", "key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "cert", "cert.pem")),
+  },
+  app
+);
 const io = new Server(server, {
   cors: {
     origin: process.env.FRONT_URL,
@@ -46,21 +60,13 @@ io.use(wrap(sessionMiddleware));
 io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
-// io.use((socket, next) => {
-//   const session = socket.request.session;
-//   if (session && session.passport && session.passport.user) {
-//     next();
-//   } else {
-//     next(new Error("Unauthorized"));
-//   }
-// });
 io.use(async (socket, next) => {
   const session = socket.request.session;
   if (session && session.passport && session.passport.user) {
     const userId = session.passport.user;
-    const user = await User.findById(userId); // Znajdź użytkownika w bazie danych
+    const user = await User.findById(userId);
     if (user) {
-      socket.user = user; // Przypisz obiekt usera do socketu
+      socket.user = user;
       next();
     } else {
       next(new Error("User not found"));
@@ -105,7 +111,7 @@ passport.use(
       console.log(`2 - local strategy verify cb ${JSON.stringify(username)}`);
 
       const user = await User.findOne({ username: username });
-      console.log(user);
+      // console.log(user);
       if (!user) {
         return done(null, false);
       }

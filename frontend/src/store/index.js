@@ -1,11 +1,4 @@
 import { createStore } from "vuex";
-// import { inject } from "vue";
-// const socket = inject("socket");
-// import { io } from "socket.io-client";
-
-// const socket = io(import.meta.env.VITE_API_URL, {
-//   withCredentials: true,
-// });
 
 export default createStore({
   state: {

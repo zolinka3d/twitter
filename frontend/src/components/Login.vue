@@ -45,6 +45,7 @@
                     }
 
                     const response = await axios.post('api/login', data);
+                    console.log(response.data);
 
                     const userResponse = await axios.get('api/user')
                     this.$store.dispatch("user", userResponse.data.user)

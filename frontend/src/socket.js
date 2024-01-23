@@ -6,7 +6,7 @@ export const state = reactive({
   postEvents: [],
 });
 
-export const socket = io(import.meta.env.VITE_API_URL, {
+export const socket = io(import.meta.env.VITE_SOCKET_URL, {
   withCredentials: true,
 });
 
