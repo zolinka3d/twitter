@@ -33,7 +33,7 @@ export default {
         console.log(this.quote);
         const response = await axios.post('/api/posts/', {
             text: this.quote.content,
-            quote_id: this.quote.post_id,
+            quote_id: this.$route.params.id,
             reference_id: null,
         });
         this.$store.dispatch('posts', [response.data.post, ...this.$store.getters.posts]);

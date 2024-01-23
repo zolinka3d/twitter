@@ -111,8 +111,6 @@ router.post("/login", (req, res, next) => {
 
 router.get("/user", requeireAuth, async (req, res) => {
   try {
-    // console.log("test");
-
     const user = await User.findById(req.user.id);
     // console.log(user);
     if (!user)

@@ -19,6 +19,7 @@ import axios from "axios";
 import { socket } from "../../socket";
 
 export default {
+  
   name: "NewComment",
   data() {
     return {
@@ -33,7 +34,7 @@ export default {
         const response = await axios.post('/api/posts/', {
             text: this.comment.content,
             quote_id: null,
-            reference_id: this.comment.post_id,
+            reference_id: this.$route.params.id,
         });
         this.$store.dispatch('posts', [response.data.post, ...this.$store.getters.posts]);
         this.$store.dispatch('myPosts', [response.data.post, ...this.$store.getters.myPosts]);

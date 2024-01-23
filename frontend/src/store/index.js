@@ -9,17 +9,16 @@ export default createStore({
     },
     posts: [],
     myPosts: [],
-    isConnected: false,
   },
   getters: {
-    user: (state) => state.user, // get the current value of the user
+    user: (state) => state.user,
     friends: (state) => state.friends,
     posts: (state) => state.posts,
     myPosts: (state) => state.myPosts,
   },
   actions: {
     user(context, user) {
-      context.commit("user", user); // 'user' refers to the mutation below
+      context.commit("user", user);
     },
     friends(context, friends) {
       context.commit("friends", friends);
@@ -30,19 +29,6 @@ export default createStore({
     myPosts(context, myPosts) {
       context.commit("myPosts", myPosts);
     },
-    // connectSocket({ commit }) {
-    //   console.log("Connecting to WebSocket...");
-    //   socket.on("connect", () => {
-    //     console.log("WebSocket connected!");
-    //     commit("SOCKET_ONOPEN");
-    //   });
-    //   socket.on("disconnect", () => {
-    //     commit("SOCKET_ONCLOSE");
-    //   });
-    //   socket.on("error", (error) => {
-    //     console.error("WebSocket Error:", error);
-    //   });
-    // },
   },
   mutations: {
     user(state, user) {
@@ -56,12 +42,6 @@ export default createStore({
     },
     myPosts(state, myPosts) {
       state.myPosts = myPosts;
-    },
-    socket_onopen(state) {
-      state.isConnected = true;
-    },
-    socket_onclose(state) {
-      state.isConnected = false;
     },
   },
 });
