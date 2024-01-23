@@ -4,7 +4,7 @@
   <Nav />
   <div class="container">
    
-    <ul class="alert">
+    <ul class="alert-custom">
       <li v-for="event in state.postEvents" :key="event.id" class="list-group-item">
         <Alert :username="event.from" :post="event.post" :type="event.type" :id="event.id"/>
       </li>
@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import Nav from './components/Nav.vue';
+import Nav from './components/utils/Nav.vue';
 import axios from 'axios';
-import Alert from './components/Alert.vue';
-import { state } from './socket';
+import Alert from './components/utils/Alert.vue';
+import { state } from './socket/socket';
 
 export default {
   name: 'App',
@@ -49,7 +49,7 @@ export default {
 </script>
 
 <style>
-.alert{
+.alert-custom{
   position: fixed;
   top: 0;
   left: 0;

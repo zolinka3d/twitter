@@ -25,7 +25,7 @@
 
 <script>
 import axios from 'axios';
-import Error from './Error.vue';
+import Error from '../utils/Error.vue';
 
 export default {
     name: 'Register',

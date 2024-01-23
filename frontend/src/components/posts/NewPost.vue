@@ -10,7 +10,7 @@
 
 
 <script>
-import { socket } from "../../socket"
+import { socket } from "../../socket/socket";
 import axios from 'axios';
 
 export default {

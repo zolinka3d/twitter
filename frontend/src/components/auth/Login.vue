@@ -1,9 +1,7 @@
 <template>
-
-    <!-- simple form for username, password and button submit -->
     
     <form class="m-2" @submit.prevent="handleSubmit">
-        <error v-if="error" :error="error" />
+        <Error v-if="error" :error="error" />
         <h1>Login</h1>
         <div class="form-group ">
             <label for="username">Username</label>
@@ -20,8 +18,8 @@
 
 <script>
     import axios from 'axios';
-    import Error from './Error.vue';
-    import { socket } from "../socket"
+    import Error from '../utils/Error.vue';
+    import { socket } from "../../socket/socket";
     
 
     export default {

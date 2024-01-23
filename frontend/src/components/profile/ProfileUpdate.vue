@@ -22,7 +22,7 @@
 </template>
 
 <script>
-    import Error from './Error.vue';
+    import Error from '../utils/Error.vue';
     import axios from 'axios';
 export default {
    

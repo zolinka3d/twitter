@@ -19,7 +19,7 @@
 <script>
     import axios from 'axios';
     import {mapGetters} from 'vuex';
-    import { socket } from '../socket';
+    import { socket } from '../../socket/socket';
 export default {
     
     name: 'Nav',

@@ -14,9 +14,6 @@
             <Posts :posts="posts"/>
         </div>
         
-        <!-- <div v-else>
-            No posts found.
-        </div> -->
         <button v-if="!allPostsLoaded && posts.length > 0" @click.prevent="fetchPosts" class="btn btn-primary">Load more</button>
     </div>
     <h1 v-else>
@@ -63,7 +60,6 @@ export default {
         async fetchPosts() {
             this.error = null;
             try {
-                console.log(this.page, this.postsPerPage);
                 const response = await axios.get(`/api/posts/home?page=${this.page}&limit=${this.postsPerPage}`);
                 if (response.data.posts.length > 0) {
                     const newPosts = response.data.posts;

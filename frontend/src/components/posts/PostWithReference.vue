@@ -52,7 +52,7 @@ export default {
         console.log(this.id);
         const response = await axios.get(`api/posts/${this.id}`);
         this.post = response.data;
-        console.log(this.post);
+
       } catch(error) {
         console.log(error);
         this.post = "error"

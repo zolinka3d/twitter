@@ -8,7 +8,7 @@
                 placeholder="Quote"
                 ></textarea>
                 <button type="submit" class="btn btn-primary">
-                    Send
+                <font-awesome-icon icon="quote-right" />
                 </button>
         </form>
     </div>
@@ -16,7 +16,7 @@
 
 <script>
 import axios from "axios";
-import { socket } from "../../socket";
+import { socket } from "../../socket/socket";
 
 export default {
   name: "NewQuote",
@@ -30,7 +30,6 @@ export default {
   },
   methods: {
     async createQuotePost() {
-        console.log(this.quote);
         const response = await axios.post('/api/posts/', {
             text: this.quote.content,
             quote_id: this.$route.params.id,
