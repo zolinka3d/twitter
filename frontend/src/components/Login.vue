@@ -21,6 +21,8 @@
 <script>
     import axios from 'axios';
     import Error from './Error.vue';
+    import { socket } from "../socket"
+    
 
     export default {
         name: 'Login',
@@ -51,8 +53,11 @@
 
                     const friendsResponse = await axios.get('api/followers')
                     this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})
-
+                    
+                    socket.connect()
                     this.$router.push('/')
+
+                    
                 } catch (error) {
                     this.error = 'Invalid usernare or password'
                 }

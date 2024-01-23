@@ -10,31 +10,16 @@
 
 
 <script>
-
+import { socket } from "../../socket"
 import axios from 'axios';
-import { inject } from 'vue';
 
 export default {
     name: "NewPost",
-    setup() {
-        return {
-            socket: inject('socket'),
-        }
-    },
     data() {
         return {
             content: '',
         }
     },
-    created() {
-        this.socket.on('connect', () => {
-            console.log('connected');
-        });
-
-        // this.socket.on('chat message', (msg) => {
-        //     console.log('Message received:', msg);
-        // });
-    }, 
     methods: {
         async newPost() {
             try {
@@ -43,7 +28,7 @@ export default {
                     quote_id: null,
                     reference_id: null,
                 });
-                this.socket.emit("post");
+                socket.emit("post")
 
                 this.content = '';
 

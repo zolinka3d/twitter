@@ -16,15 +16,10 @@
 
 <script>
 import axios from "axios";
-import { inject } from 'vue';
+import { socket } from "../../socket";
 
 export default {
   name: "NewComment",
-  setup() {
-        return {
-            socket: inject('socket'),
-        }
-    },
   data() {
     return {
       comment: {
@@ -43,8 +38,7 @@ export default {
         this.$store.dispatch('posts', [response.data.post, ...this.$store.getters.posts]);
         this.$store.dispatch('myPosts', [response.data.post, ...this.$store.getters.myPosts]);
         
-        this.socket.emit("post");
-        // emit event to parent
+        socket.emit("post");
         this.$emit("newComment", response.data.post);
         this.comment.content = "";
     },

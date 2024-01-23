@@ -19,19 +19,14 @@
 <script>
     import axios from 'axios';
     import {mapGetters} from 'vuex';
-    import { inject } from 'vue';
+    import { socket } from '../socket';
 export default {
     
     name: 'Nav',
-    setup() {
-        return {
-            socket: inject('socket'),
-        }
-    },
     methods: {
         handleClick() {
             axios.delete('api/logout');
-            this.socket.disconnect();
+            socket.disconnect()
             this.$store.dispatch("user", null);
             this.$router.push('/login');
         }

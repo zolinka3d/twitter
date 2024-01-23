@@ -16,15 +16,10 @@
 
 <script>
 import axios from "axios";
-import { inject } from 'vue';
+import { socket } from "../../socket";
 
 export default {
   name: "NewQuote",
-  setup() {
-        return {
-            socket: inject('socket'),
-        }
-    },
   data() {
     return {
       quote: {
@@ -43,7 +38,7 @@ export default {
         });
         this.$store.dispatch('posts', [response.data.post, ...this.$store.getters.posts]);
         this.$store.dispatch('myPosts', [response.data.post, ...this.$store.getters.myPosts]);
-        this.socket.emit("post");
+        socket.emit("post");
         this.quote.content = "";
     },
   },
