@@ -1,16 +1,23 @@
 <template>
     <div v-if="user">
         <NewPost />
+        <button @click.prevent="reload" class="btn btn-primary">Reload</button>
+
         <div v-if="loading">
             Loading posts...
         </div>
         <div v-else-if="error">
             Error fetching posts: {{ error }}
         </div>
-        <Posts :posts="posts" v-else-if="posts.length > 0"/>
-        <div v-else>
-            No posts found.
+        
+        <div v-else-if="posts.length > 0">
+            <Posts :posts="posts"/>
         </div>
+        
+        <!-- <div v-else>
+            No posts found.
+        </div> -->
+        <button v-if="!allPostsLoaded && posts.length > 0" @click.prevent="fetchPosts" class="btn btn-primary">Load more</button>
     </div>
     <h1 v-else>
         Please login
@@ -33,9 +40,11 @@ export default {
 },
     data() {
         return {
-            // posts: [],
             loading: false,
-            error: null
+            error: null,
+            page: 1,
+            postsPerPage: 5,
+            allPostsLoaded: false
         }
     },
     computed: {
@@ -45,20 +54,43 @@ export default {
     created() {
         this.fetchPosts();
     },
+    mutations: {
+        posts(state, posts) {
+            state.posts = posts;
+        }
+    },
     methods: {
         async fetchPosts() {
             this.error = null;
-            this.loading = true;
             try {
-                const response = await axios.get('/api/posts/home');
-                // this.posts = response.data.posts
-                this.$store.dispatch('posts', response.data.posts);
+                console.log(this.page, this.postsPerPage);
+                const response = await axios.get(`/api/posts/home?page=${this.page}&limit=${this.postsPerPage}`);
+                if (response.data.posts.length > 0) {
+                    const newPosts = response.data.posts;
+                    const existingPostIds = new Set(this.posts.map(post => post.id));
+                    const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post.id));
+
+                    this.$store.dispatch('posts', [...this.posts, ...uniqueNewPosts]);
+                    this.$store.dispatch('posts', [...this.posts, ...response.data.posts]);
+                    this.page++; 
+            } else {
+                this.allPostsLoaded = true;
+            }
             } catch (error) {
                 this.error = error.toString();
             } finally {
                 this.loading = false;
             }
-        }
-    }
+        },
+        async reload(){
+            this.page = 1;
+            this.allPostsLoaded = false;
+            this.$store.dispatch('posts', []);
+            await this.fetchPosts();
+        },
+
+    },
+
+
 }
 </script>

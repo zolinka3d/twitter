@@ -46,7 +46,6 @@
 
                     const response = await axios.post('api/login', data);
 
-                    // localStorage.setItem('token', response.data.access_token)
                     const userResponse = await axios.get('api/user')
                     this.$store.dispatch("user", userResponse.data.user)
                     this.$store.dispatch("myPosts", userResponse.data.user.posts)

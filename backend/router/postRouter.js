@@ -90,40 +90,20 @@ router.post("/", requeireAuth, async (req, res) => {
 
 router.get("/home", requeireAuth, async (req, res) => {
   const { id } = req.user;
+  ///
+  const page = parseInt(req.query.page) || 1; // Domyślnie strona 1
+  const limit = parseInt(req.query.limit) || 10; // Domyślnie 10 postów
+  const skip = (page - 1) * limit;
+
   console.log(id);
   try {
     let user = await User.findById(id).populate("following");
-    let posts = await Post.find({ user_id: { $in: user.following } });
-    let my_posts = await Post.find({ user_id: id });
-    posts = posts.concat(my_posts);
-    posts = posts.sort((a, b) => {
-      return b.date - a.date;
-    });
-    // const postsDetails = await Promise.all(
-    //   posts.map(async (post) => {
-    //     let userData = await User.findById(post.user_id);
-    //     let quoteData = post.quote_id
-    //       ? await Post.findById(post.quote_id)
-    //       : null;
-    //     let referenceData = post.reference_id
-    //       ? await Post.findById(post.reference_id)
-    //       : null;
+    let userIds = [id, ...user.following.map((user) => user.id)];
+    let posts = await Post.find({ user_id: { $in: userIds } })
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    //     return {
-    //       id: post.id,
-    //       text: post.text,
-    //       user: {
-    //         id: userData.id,
-    //         username: userData.username,
-    //         avatar: userData.avatar,
-    //       },
-    //       comments: post.comments,
-    //       date: post.date,
-    //       quote: quoteData,
-    //       reference: referenceData,
-    //     };
-    //   })
-    // );
     const postsDetails = await fetchPostDetails(posts);
     res.status(200).json({
       posts: postsDetails,

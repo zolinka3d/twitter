@@ -58,6 +58,11 @@ export default {
                 this.otherUser.amIFollowing = true;
                 const friendsResponse = await axios.get('api/followers')
                 this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})
+
+
+                const response = await axios.get(`/api/posts/home`);
+                this.$store.dispatch('posts', response.data.posts);
+
             } catch (error) {
                 console.log(error);
             }
@@ -68,6 +73,10 @@ export default {
                 this.otherUser.amIFollowing = false;
                 const friendsResponse = await axios.get('api/followers')
                 this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})
+
+                const response = await axios.get(`/api/posts/home`);
+                this.$store.dispatch('posts', response.data.posts);
+                
             } catch (error) {
                 console.log(error);
             }

@@ -27,7 +27,7 @@ export default {
                     text: this.content,
                     quote_id: null,
                     reference_id: null,
-                });
+                })
                 socket.emit("post")
 
                 this.content = '';

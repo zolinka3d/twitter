@@ -28,6 +28,10 @@ export default {
             axios.delete('api/logout');
             socket.disconnect()
             this.$store.dispatch("user", null);
+            this.$store.dispatch("posts", []);
+            this.$store.dispatch("myPosts", []);
+            this.$store.dispatch("friends", {followers: [], following: []});
+
             this.$router.push('/login');
         }
     },
