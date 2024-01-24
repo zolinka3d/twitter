@@ -91,8 +91,8 @@ router.post("/", requeireAuth, async (req, res) => {
 router.get("/home", requeireAuth, async (req, res) => {
   const { id } = req.user;
   ///
-  const page = parseInt(req.query.page) || 1; // Domyślnie strona 1
-  const limit = parseInt(req.query.limit) || 10; // Domyślnie 10 postów
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
 
   console.log(id);
@@ -171,18 +171,6 @@ router.get("/:id", requeireAuth, async (req, res) => {
         return b.date - a.date;
       }),
     });
-
-    // res.status(200).json({
-    //   post: {
-    //     id: post.id,
-    //     text: post.text,
-    //     user_id: post.user_id,
-    //     comments: post.comments,
-    //     date: post.date,
-    //     quote_id: post.quote_id,
-    //     reference_id: post.reference_id,
-    //   },
-    // });
   } catch (error) {
     console.error(new Error(error));
     res.status(500).json({
@@ -190,44 +178,5 @@ router.get("/:id", requeireAuth, async (req, res) => {
     });
   }
 });
-
-// try {
-//   let posts = await Post.find({ user_id: { $in: following } }).sort({
-//     date: -1,
-//   });
-//   const postDetails = await Promise.all(
-//     posts.map(async (post) => {
-//       let userData = await User.findById(post.user_id);
-//       let quoteData = post.quote_id
-//         ? await Post.findById(post.quote_id)
-//         : null;
-//       let referenceData = post.reference_id
-//         ? await Post.findById(post.reference_id)
-//         : null;
-
-//       return {
-//         id: post.id,
-//         text: post.text,
-//         user: {
-//           id: userData.id,
-//           username: userData.username,
-//           avatar: userData.avatar,
-//         },
-//         comments: post.comments,
-//         date: post.date,
-//         quote: quoteData,
-//         reference: referenceData,
-//       };
-//     })
-//   );
-//   res.status(200).json({
-//     posts: postDetails,
-//   });
-// } catch (error) {
-//   console.error(new Error(error));
-//   res.status(500).json({
-//     error: error.message,
-//   });
-// }
 
 module.exports = { postRouter: router };

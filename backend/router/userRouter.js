@@ -112,7 +112,7 @@ router.post("/login", (req, res, next) => {
 router.get("/user", requeireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
-    // console.log(user);
+
     if (!user)
       return res.status(404).json({
         timestamp: Date.now(),
@@ -259,5 +259,4 @@ router.all("*", async (req, res) => {
   }
 });
 
-// router as userRouter
 module.exports = { userRouter: router };

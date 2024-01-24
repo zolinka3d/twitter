@@ -11,7 +11,6 @@
         </div>
         <Posts :posts="otherUser.posts" v-if="otherUser.posts.length > 0"/>
     </div>
-    <!-- <h1 v-if="banned">User has banned you</h1> -->
     <h1 v-else-if="otherUser === 'loading'">Loading...</h1>
     <h1 v-else>User not found</h1>
 </template>

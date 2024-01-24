@@ -111,12 +111,10 @@ passport.use(
       console.log(`2 - local strategy verify cb ${JSON.stringify(username)}`);
 
       const user = await User.findOne({ username: username });
-      // console.log(user);
       if (!user) {
         return done(null, false);
       }
 
-      // compare password to stored password false of true
       const result = await new Promise((resolve, reject) => {
         bcrypt.compare(password, user.password, (err, result) => {
           if (err) reject(err);

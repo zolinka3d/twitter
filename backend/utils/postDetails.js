@@ -19,16 +19,13 @@ async function fetchQuoteData(quoteId) {
 const fetchPostDetails = async (posts) => {
   const postsDetails = await Promise.all(
     posts.map(async (post) => {
-      // Fetch quote data if quote_id is present
       const quoteData = post.quote_id
         ? await fetchQuoteData(post.quote_id)
         : null;
-      // Fetch reference data if reference_id is present
       const referenceData = post.reference_id
         ? await Post.findById(post.reference_id)
         : null;
 
-      // Return the enriched post object
       let user = await User.findById(post.user_id);
       return {
         id: post.id,
