@@ -86,7 +86,7 @@ export default {
         async reload(){
             this.allPostsLoaded = false;
             this.$store.dispatch('posts', []);
-            this.$store.commit('resetPage')
+            this.$store.dispatch("page", 1)
             await this.fetchPosts();
         },
 
