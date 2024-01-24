@@ -46,8 +46,8 @@ export default {
         },
         async handlePostUploadAction() {
             if (this.avatar) {
-                console.log('Avatar URL:', this.avatar);
-                console.log("after done?");
+                // console.log('Avatar URL:', this.avatar);
+                // console.log("after done?");
 
                 try {
                     const data = {
@@ -79,7 +79,7 @@ export default {
                     this.error = null;
                     switch (result.event) {
                         case "success":
-                            console.log('File Uploaded! Here is the image info: ', result.info);
+                            // console.log('File Uploaded! Here is the image info: ', result.info);
                             this.avatar = result.info.secure_url;
                             break;
                         default:
