@@ -2,6 +2,7 @@
     <div class="card">
         <h1 class="card-header">Upload some images!</h1>
         <div class="card-body">
+            <Error v-if="error" :error="error"/>
             <div class="list-group avatar-container">
                 <button @click="openUploadWidget" class="btn btn-primary">Upload a new photo</button>
             </div>
@@ -16,6 +17,7 @@
 
 <script>
 import axios from 'axios';
+import Error from '../utils/Error.vue'
 
 export default {
     name: 'UploadWidget',
@@ -23,13 +25,21 @@ export default {
         return {
             widget: null,
             avatar: null,
-            isWidgetOpen: false
+            isWidgetOpen: false,
+            error: null
         };
+    },
+    components:{
+        Error
     },
     methods: {
         openUploadWidget() {
             this.isWidgetOpen = true;
-            this.widget.open();
+            if (this.widget)
+            {
+                this.widget.open();
+            }
+            
         },
         removeAvatar() {
             this.avatar = null;
@@ -51,18 +61,22 @@ export default {
                     avatar: response.data.user.avatar,
                     posts: posts
                 });
+                    this.error = null;
                     this.$router.push('/profile');
                 } catch (error) {
+                    this.error = "Check your network connection"
                     console.log(error);
                 }
             }
         }
     },
     mounted() {
-        this.widget = window.cloudinary.createUploadWidget(
+        try {
+            this.widget = window.cloudinary.createUploadWidget(
             { cloud_name: "dwplyolgd", upload_preset: "upload_vue" },
             (error, result) => {
                 if (!error && result) {
+                    this.error = null;
                     switch (result.event) {
                         case "success":
                             console.log('File Uploaded! Here is the image info: ', result.info);
@@ -72,9 +86,15 @@ export default {
                             
                             break;
                     }
+                } else {
+                    this.error = "Check your network connection"
                 }
             }
         );
+        } catch (error) {
+            console.log(error);
+        }
+        
     }
 }
 </script>
