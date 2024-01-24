@@ -9,6 +9,7 @@ const userSchema = new Schema({
   followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
   registrationDate: Date,
   posts: [{ type: Schema.Types.ObjectId, ref: "Post", sort: { date: -1 } }],
+  banned: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });
 
 module.exports = model("User", userSchema);

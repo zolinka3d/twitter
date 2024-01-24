@@ -179,6 +179,7 @@ router.get("/profile/:username", async (req, res) => {
 
   try {
     const user = await User.findOne({ username: username });
+    const me = await User.findById(req.user.id);
     if (!user) {
       return res.status(400).json({
         timestamp: Date.now(),
@@ -186,11 +187,20 @@ router.get("/profile/:username", async (req, res) => {
         code: 400,
       });
     } else {
+      if (user.banned.includes(req.user.id)) {
+        return res.status(403).json({
+          timestamp: Date.now(),
+          msg: "User is banned",
+          code: 403,
+        });
+      }
       const isFollowingMe = user.following.includes(req.user.id);
       const amIFollowing = user.followers.includes(req.user.id);
       const posts = await Post.find({ user_id: user.id }).sort({ date: -1 });
       const postDetails = await fetchPostDetails(posts);
-      console.log(postDetails);
+      // console.log(postDetails);
+
+      const banned = me.banned.includes(user.id);
 
       res.status(200).json({
         user: {
@@ -202,9 +212,78 @@ router.get("/profile/:username", async (req, res) => {
           isFollowingMe: isFollowingMe,
           amIFollowing: amIFollowing,
           posts: postDetails,
+          banned: banned,
         },
       });
     }
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(400).json({
+      msg: "Error",
+    });
+  }
+});
+
+router.delete("/ban/:username", requeireAuth, async (req, res) => {
+  const { username } = req.params;
+  try {
+    const me = await User.findById(req.user.id);
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      return res.status(400).json({
+        timestamp: Date.now(),
+        msg: "User not found",
+        code: 400,
+      });
+    } else {
+      me.banned.push(user.id);
+      await me.save();
+      if (user.followers.includes(me.id)) {
+        user.followers.pull(me.id);
+      }
+      if (user.following.includes(me.id)) {
+        user.following.pull(me.id);
+      }
+      if (me.followers.includes(user.id)) {
+        me.followers.pull(user.id);
+      }
+      if (me.following.includes(user.id)) {
+        me.following.pull(user.id);
+      }
+    }
+    await user.save();
+    await me.save();
+    res.status(200).json({
+      msg: "Banned",
+    });
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(400).json({
+      msg: "Error",
+    });
+  }
+});
+
+router.post("/unban/:username", requeireAuth, async (req, res) => {
+  const { username } = req.params;
+  try {
+    const me = await User.findById(req.user.id);
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      return res.status(400).json({
+        timestamp: Date.now(),
+        msg: "User not found",
+        code: 400,
+      });
+    } else {
+      me.banned.pull(user.id);
+      await me.save();
+    }
+    await user.save();
+    await me.save();
+    res.status(200).json({
+      msg: "Unbanned",
+    });
   } catch (error) {
     console.error(new Error(error));
     res.status(400).json({

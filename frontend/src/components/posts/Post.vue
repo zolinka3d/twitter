@@ -4,7 +4,7 @@
         <div class="header" >
             <router-link :to="{name: 'FriendProfile', params: {username: post.user.username}}" class="user">
                 <div class="user">
-                    <img :src="post.user.avatar" alt="profile img"  class="img"/>
+                    <img v-if="post.user.avatar" :src="post.user.avatar" alt="profile img"  class="img"/>
                 </div>
                 <div class="user">
                     <h3>{{ post.user.username }}</h3>
@@ -28,7 +28,7 @@
                     <div class="header" >
                         <router-link :to="{name: 'FriendProfile', params: {username: post.quote.user.username}}" class="user">
                             <div class="user">
-                                <img :src="post.quote.user.avatar" alt="profile img"  class="img"/>
+                                <img v-if="post.quote.user.avatar" :src="post.quote.user.avatar" alt="profile img"  class="img"/>
                             </div>
                             <div class="user">
                                 <h3>{{ post.quote.user.username }}</h3>

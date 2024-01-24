@@ -6,7 +6,7 @@
    
     <ul class="alert-custom">
       <li v-for="event in state.postEvents" :key="event.id" class="list-group-item">
-        <Alert :username="event.from" :post="event.post" :type="event.type" :id="event.id"/>
+        <Alert :message="event.message" />
       </li>
     </ul>
       <router-view ></router-view>

@@ -34,7 +34,7 @@ const fetchPostDetails = async (posts) => {
         id: post.id,
         text: post.text,
         user: {
-          id: post.user_id,
+          id: user.id,
           username: user.username,
           avatar: user.avatar,
         },

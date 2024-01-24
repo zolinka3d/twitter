@@ -14,10 +14,6 @@
             <label for="password">Password</label>
             <input type="password" v-model="password" class="form-control" id="password" placeholder="Enter password">
         </div>
-        <div class="form-group">
-            <label for="password2">Confirm Password</label>
-            <input type="password" v-model="password2" class="form-control" id="password2" placeholder="Confirm password">
-        </div>
         <button  class="btn btn-primary" >Submit</button>
     </form>
 
@@ -38,7 +34,6 @@ export default {
             username: '',
             email: '',
             password: '',
-            password2: '',
             error: ''
         }
     },

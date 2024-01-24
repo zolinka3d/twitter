@@ -1,6 +1,6 @@
 <template>
-    <div class=" show">
-      <strong>{{ username }}</strong> added a new post!
+    <div class="show">
+      <strong>{{ message }}</strong> 
     </div>
   </template>
   
@@ -8,7 +8,7 @@
   export default {
     name: "Alert",
     props: {
-      username: {
+      message: {
         type: String,
         required: true
       },

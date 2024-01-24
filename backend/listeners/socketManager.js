@@ -35,6 +35,22 @@ const socketManager = (io) => {
         }
       });
     });
+
+    socket.on("ban", async (msg) => {
+      let me = await User.findById(socket.user.id);
+      let user = await User.findOne({ username: msg });
+
+      console.log("Ban from user:", me.username, "to ", msg);
+
+      let userId = user.id.toString();
+      if (userSockets.has(userId)) {
+        const userSocket = userSockets.get(userId);
+        userSocket.emit("ban", {
+          from: me.username,
+          userId: me.id,
+        });
+      }
+    });
   });
 };
 

@@ -1,6 +1,6 @@
 <template>
     <div v-if="user">
-        <NewPost />
+        <NewPost/>
         <button @click.prevent="reload" class="btn btn-primary">Reload</button>
 
         <div v-if="loading">
@@ -60,14 +60,14 @@ export default {
         async fetchPosts() {
             this.error = null;
             try {
-                const response = await axios.get(`/api/posts/home?page=${this.page}&limit=${this.postsPerPage}`);
+                const response = await axios.get(`api/posts/home?page=${this.page}&limit=${this.postsPerPage}`);
                 if (response.data.posts.length > 0) {
                     const newPosts = response.data.posts;
                     const existingPostIds = new Set(this.posts.map(post => post.id));
                     const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post.id));
 
                     this.$store.dispatch('posts', [...this.posts, ...uniqueNewPosts]);
-                    this.$store.dispatch('posts', [...this.posts, ...response.data.posts]);
+                    // this.$store.dispatch('posts', [...this.posts, ...response.data.posts]);
                     this.page++; 
             } else {
                 this.allPostsLoaded = true;

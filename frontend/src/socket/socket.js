@@ -1,5 +1,6 @@
 import { reactive } from "vue";
 import { io } from "socket.io-client";
+import store from "../store/index.js";
 
 export const state = reactive({
   connected: false,
@@ -21,10 +22,32 @@ socket.on("disconnect", () => {
 });
 
 socket.on("post", (post) => {
-  state.postEvents.push(post);
-  console.log("post from ", post.from);
-
+  const uniqueId = Date.now();
+  const notification = {
+    id: uniqueId,
+    message: post.from + " added a new post",
+  };
+  state.postEvents.push(notification);
   setTimeout(() => {
     state.postEvents.splice(state.postEvents.indexOf(post.from), 1);
+  }, 3000);
+});
+
+socket.on("ban", (ban) => {
+  const uniqueId = Date.now();
+  const notification = {
+    id: uniqueId,
+    message: ban.from + " banned you",
+  };
+  state.postEvents.push(notification);
+
+  console.log("ban from ", ban.from);
+  console.log("ban userId ", ban.userId);
+
+  store.commit("removeUserPosts", ban.from);
+  store.commit("removeFriend", ban.from);
+
+  setTimeout(() => {
+    state.postEvents.splice(state.postEvents.indexOf(ban.from), 1);
   }, 3000);
 });
