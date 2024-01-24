@@ -21,6 +21,7 @@ const sessionMiddleware = cookieSession({
 });
 
 const app = express();
+
 app.use(
   cors({
     origin: process.env.FRONT_URL,
@@ -130,9 +131,15 @@ passport.use(
     }
   )
 );
+
 app.use("/api/followers", followerRouter);
 app.use("/api/posts", postRouter);
 app.use("/api", userRouter);
+
+app.use(express.static("public"));
+app.get("*", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
 
 mongoose
   .connect(

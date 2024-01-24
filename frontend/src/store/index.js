@@ -9,12 +9,14 @@ export default createStore({
     },
     posts: [],
     myPosts: [],
+    page: 1,
   },
   getters: {
     user: (state) => state.user,
     friends: (state) => state.friends,
     posts: (state) => state.posts,
     myPosts: (state) => state.myPosts,
+    page: (state) => state.page,
   },
   actions: {
     user(context, user) {
@@ -28,6 +30,9 @@ export default createStore({
     },
     myPosts(context, myPosts) {
       context.commit("myPosts", myPosts);
+    },
+    page(context, page) {
+      context.commit("page", page);
     },
   },
   mutations: {
@@ -44,7 +49,7 @@ export default createStore({
       state.myPosts = myPosts;
     },
     removeUserPosts(state, username) {
-      console.log(state.posts.length);
+      // console.log(state.posts.length);
 
       state.posts = state.posts.filter((post) => {
         return post.user.username !== username;
@@ -57,6 +62,15 @@ export default createStore({
       state.friends.followers = state.friends.followers.filter((user) => {
         return user.username !== username;
       });
+    },
+    page(state, page) {
+      state.page = page;
+    },
+    addPage(state) {
+      state.page++;
+    },
+    resetPage(state) {
+      state.page = 2;
     },
   },
 });

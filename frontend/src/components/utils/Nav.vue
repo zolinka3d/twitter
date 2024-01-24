@@ -29,6 +29,7 @@ export default {
             socket.disconnect()
             this.$store.dispatch("user", null);
             this.$store.dispatch("posts", []);
+            this.$store.commit('resetPage')
             this.$store.dispatch("myPosts", []);
             this.$store.dispatch("friends", {followers: [], following: []});
 

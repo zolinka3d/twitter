@@ -26,6 +26,8 @@ import axios from 'axios';
 import { mapGetters } from 'vuex';
 import NewPost from './posts/NewPost.vue';
 import Posts from './posts/Posts.vue';
+import store from '../store';
+
 
 
 export default {
@@ -39,14 +41,15 @@ export default {
         return {
             loading: false,
             error: null,
-            page: 1,
+            // page: 1,
             postsPerPage: 5,
             allPostsLoaded: false
         }
     },
     computed: {
         ...mapGetters(['user']),
-        ...mapGetters(['posts'])
+        ...mapGetters(['posts']),
+        // ...mapGetters(['page'])
     },
     created() {
         this.fetchPosts();
@@ -60,15 +63,17 @@ export default {
         async fetchPosts() {
             this.error = null;
             try {
-                const response = await axios.get(`api/posts/home?page=${this.page}&limit=${this.postsPerPage}`);
+                const response = await axios.get(`api/posts/home?page=${this.$store.state.page}&limit=${this.postsPerPage}`);
                 if (response.data.posts.length > 0) {
                     const newPosts = response.data.posts;
                     const existingPostIds = new Set(this.posts.map(post => post.id));
                     const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post.id));
-
+                    
                     this.$store.dispatch('posts', [...this.posts, ...uniqueNewPosts]);
                     // this.$store.dispatch('posts', [...this.posts, ...response.data.posts]);
-                    this.page++; 
+                    // this.page++; 
+                    this.$store.commit('addPage')
+                                    
             } else {
                 this.allPostsLoaded = true;
             }
@@ -79,9 +84,9 @@ export default {
             }
         },
         async reload(){
-            this.page = 1;
             this.allPostsLoaded = false;
             this.$store.dispatch('posts', []);
+            this.$store.commit('resetPage')
             await this.fetchPosts();
         },
 

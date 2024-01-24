@@ -37,6 +37,7 @@ export default {
             reference_id: this.$route.params.id,
         });
         this.$store.dispatch('posts', [response.data.post, ...this.$store.getters.posts]);
+        this.$store.commit('resetPage')
         this.$store.dispatch('myPosts', [response.data.post, ...this.$store.getters.myPosts]);
         
         socket.emit("post");

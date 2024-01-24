@@ -69,6 +69,7 @@ export default {
 
 
                 const response = await axios.get(`/api/posts/home`);
+                this.$store.commit('resetPage')
                 this.$store.dispatch('posts', response.data.posts);
 
             } catch (error) {

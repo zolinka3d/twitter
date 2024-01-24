@@ -36,6 +36,7 @@ export default {
             reference_id: null,
         });
         this.$store.dispatch('posts', [response.data.post, ...this.$store.getters.posts]);
+        this.$store.commit('addPage')
         this.$store.dispatch('myPosts', [response.data.post, ...this.$store.getters.myPosts]);
         socket.emit("post");
         this.quote.content = "";
