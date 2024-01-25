@@ -49,7 +49,6 @@ export default {
   methods: {
     async fetchPost() {
       try{
-        console.log(this.id);
         const response = await axios.get(`api/posts/${this.id}`);
         this.post = response.data;
 
