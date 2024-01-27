@@ -13,7 +13,6 @@ const {
 } = require("../validation/validationSchema");
 const requeireAuth = require("../middleware/requireAuth");
 const { fetchPostDetails } = require("../utils/postDetails");
-const { fetchQuoteData } = require("../utils/postDetails");
 
 router.post("/register", async (req, res) => {
   if (req.isAuthenticated()) {

@@ -31,7 +31,7 @@ app.use(
 app.use(sessionMiddleware);
 
 // socket.io
-const http = require("http");
+// const http = require("http");
 
 const https = require("https");
 const fs = require("fs");
@@ -153,7 +153,7 @@ mongoose
     const port = process.env.PORT || 2137;
     const apiHost = process.env.API_HOST || "localhost";
     server.listen(port, () => {
-      console.log(`API server available from: http://${apiHost}:${port}`);
+      console.log(`API server available from: https://${apiHost}:${port}`);
     });
   })
   .catch((error) => console.error("Error connecting to MongoDB", error));

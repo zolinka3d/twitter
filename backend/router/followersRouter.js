@@ -4,7 +4,6 @@ const requeireAuth = require("../middleware/requireAuth");
 const User = require("../models/MongoUser");
 const Post = require("../models/MongoPost");
 const { fetchPostDetails } = require("../utils/postDetails");
-const { fetchQuoteData } = require("../utils/postDetails");
 
 router.get("/", requeireAuth, async (req, res) => {
   const { id } = req.user;
