@@ -10,6 +10,8 @@ export default createStore({
     posts: [],
     myPosts: [],
     page: 1,
+    firstPost: null,
+    lastPost: null,
   },
   getters: {
     user: (state) => state.user,
@@ -17,6 +19,8 @@ export default createStore({
     posts: (state) => state.posts,
     myPosts: (state) => state.myPosts,
     page: (state) => state.page,
+    firstPost: (state) => state.firstPost,
+    lastPost: (state) => state.lastPost,
   },
   actions: {
     user(context, user) {
@@ -27,12 +31,22 @@ export default createStore({
     },
     posts(context, posts) {
       context.commit("posts", posts);
+      if (posts.length > 0) {
+        context.commit("firstPost", posts[0]);
+        context.commit("lastPost", posts[posts.length - 1]);
+      }
     },
     myPosts(context, myPosts) {
       context.commit("myPosts", myPosts);
     },
     page(context, page) {
       context.commit("page", page);
+    },
+    firstPost(context, firstPost) {
+      context.commit("firstPost", firstPost);
+    },
+    lastPost(context, lastPost) {
+      context.commit("lastPost", lastPost);
     },
   },
   mutations: {
@@ -71,6 +85,12 @@ export default createStore({
     },
     resetPage(state) {
       state.page = 2;
+    },
+    firstPost(state, firstPost) {
+      state.firstPost = firstPost;
+    },
+    lastPost(state, lastPost) {
+      state.lastPost = lastPost;
     },
   },
 });

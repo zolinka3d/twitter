@@ -5,6 +5,7 @@ import store from "../store/index.js";
 export const state = reactive({
   connected: false,
   postEvents: [],
+  banEvents: [],
 });
 
 export const socket = io(import.meta.env.VITE_SOCKET_URL, {
@@ -28,9 +29,6 @@ socket.on("post", (post) => {
     message: post.from + " added a new post",
   };
   state.postEvents.push(notification);
-  setTimeout(() => {
-    state.postEvents.splice(state.postEvents.indexOf(post.from), 1);
-  }, 3000);
 });
 
 socket.on("ban", (ban) => {
@@ -39,7 +37,7 @@ socket.on("ban", (ban) => {
     id: uniqueId,
     message: ban.from + " banned you",
   };
-  state.postEvents.push(notification);
+  state.banEvents.push(notification);
 
   console.log("ban from ", ban.from);
   console.log("ban userId ", ban.userId);
@@ -48,6 +46,6 @@ socket.on("ban", (ban) => {
   store.commit("removeFriend", ban.from);
 
   setTimeout(() => {
-    state.postEvents.splice(state.postEvents.indexOf(ban.from), 1);
+    state.banEvents.splice(state.banEvents.indexOf(ban.from), 1);
   }, 3000);
 });

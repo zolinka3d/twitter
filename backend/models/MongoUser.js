@@ -10,6 +10,9 @@ const userSchema = new Schema({
   registrationDate: Date,
   posts: [{ type: Schema.Types.ObjectId, ref: "Post", sort: { date: -1 } }],
   banned: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  homePagePosts: [
+    { type: Schema.Types.ObjectId, ref: "Post", sort: { date: -1 } },
+  ],
 });
 
 module.exports = model("User", userSchema);
