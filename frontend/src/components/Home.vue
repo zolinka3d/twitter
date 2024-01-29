@@ -48,7 +48,6 @@ export default {
         return {
             loading: false,
             error: null,
-            // page: 1
             postsPerPage: 5,
             allPostsLoaded: false,
             bufforPost: null,
@@ -61,7 +60,6 @@ export default {
     computed: {
         ...mapGetters(['user']),
         ...mapGetters(['posts']),
-        // ...mapGetters(['page'])
     },
     created() {
         this.fetchPosts();
@@ -75,7 +73,6 @@ export default {
         async fetchPosts() {
             this.error = null;
             try {
-                // const response = await axios.get(`api/posts/home?page=${this.$store.state.page}&limit=${this.postsPerPage}`);
                 let response;
                 if (this.$store.state.firstPost) {
                     response = await axios.get(`api/posts/home?firstDate=${this.$store.state.lastPost.date}&limit=${this.postsPerPage}`);
@@ -91,9 +88,6 @@ export default {
                     const uniqueNewPosts = newPosts.filter(post => !existingPostIds.has(post.id));
                     
                     this.$store.dispatch('posts', [...this.posts, ...uniqueNewPosts]);
-                    // this.$store.dispatch('posts', [...this.posts, ...response.data.posts]);
-                    // this.page++; 
-                    this.$store.commit('addPage')
                                     
             } else {
                 this.allPostsLoaded = true;

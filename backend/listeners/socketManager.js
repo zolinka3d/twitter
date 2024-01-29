@@ -13,13 +13,8 @@ const socketManager = (io) => {
       console.log("User disconnected", socket.id, socket.user.username);
     });
 
-    socket.on("chat message", (msg) => {
-      console.log("Message from user:", socket.user.username, msg);
-      io.emit("chat message", { user: socket.user.username, message: msg });
-    });
-
     socket.on("post", async (msg) => {
-      console.log("Post from user:", socket.user.username, msg);
+      console.log("Post from user:", socket.user.username);
       let user = await User.findById(socket.user.id);
       let userFollowersIds = user.followers.map((follower) =>
         follower.toString()

@@ -79,7 +79,8 @@ router.post("/login", (req, res, next) => {
   console.log(`1 - login handler)`);
 
   passport.authenticate("local", (err, user) => {
-    console.log(`3 - passport authenticate cb ${JSON.stringify(user)}`);
+    // console.log(`3 - passport authenticate cb ${JSON.stringify(user)}`);
+    console.log(`3 - passport authenticate cb`);
 
     if (err) {
       return res.status(401).json({

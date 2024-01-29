@@ -62,13 +62,6 @@ export default createStore({
     myPosts(state, myPosts) {
       state.myPosts = myPosts;
     },
-    // removeUserPosts(state, username) {
-    //   // console.log(state.posts.length);
-
-    //   state.posts = state.posts.filter((post) => {
-    //     return post.user.username !== username;
-    //   });
-    // },
     removeFriend(state, username) {
       state.friends.following = state.friends.following.filter((user) => {
         return user.username !== username;

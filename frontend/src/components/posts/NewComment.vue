@@ -38,8 +38,6 @@ export default {
         });
         const postsResponse = await axios.get('api/posts/home')
         this.$store.dispatch('posts', postsResponse.data.posts);
-        // this.$store.dispatch('posts', [response.data.post, ...this.$store.getters.posts]);
-        // this.$store.commit('resetPage')
         this.$store.dispatch('myPosts', [response.data.post, ...this.$store.getters.myPosts]);
         
         socket.emit("post");

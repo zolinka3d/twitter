@@ -145,41 +145,11 @@ router.get("/home/after", requeireAuth, async (req, res) => {
     return b.date - a.date;
   });
 
-  console.log(posts);
-
   const postsDetails = await fetchPostDetails(postSorted);
   res.status(200).json({
     posts: postsDetails,
   });
 });
-
-// router.get("/home", requeireAuth, async (req, res) => {
-//   const { id } = req.user;
-//   ///
-//   const page = parseInt(req.query.page) || 1;
-//   const limit = parseInt(req.query.limit) || 10;
-//   const skip = (page - 1) * limit;
-
-//   console.log(id);
-//   try {
-//     let user = await User.findById(id).populate("following");
-//     let userIds = [id, ...user.following.map((user) => user.id)];
-//     let posts = await Post.find({ user_id: { $in: userIds } })
-//       .sort({ date: -1 })
-//       .skip(skip)
-//       .limit(limit);
-
-//     const postsDetails = await fetchPostDetails(posts);
-//     res.status(200).json({
-//       posts: postsDetails,
-//     });
-//   } catch (error) {
-//     console.error(new Error(error));
-//     res.status(500).json({
-//       error: error.message,
-//     });
-//   }
-// });
 
 router.get("/:id", requeireAuth, async (req, res) => {
   const { id } = req.params;

@@ -197,7 +197,6 @@ router.get("/profile/:username", async (req, res) => {
       const amIFollowing = user.followers.includes(req.user.id);
       const posts = await Post.find({ user_id: user.id }).sort({ date: -1 });
       const postDetails = await fetchPostDetails(posts);
-      // console.log(postDetails);
 
       const banned = me.banned.includes(user.id);
 
