@@ -17,15 +17,6 @@
 export default {
     name: 'Friend',
     props: ['friend'],
-    methods: {
-        follow() {
-            this.$store.dispatch('follow', this.friend.id);
-        },
-        unfollow() {
-            this.$store.dispatch('unfollow', this.friend.id);
-        }
-    },
-
 }
 
 </script>

@@ -27,11 +27,7 @@ export default {
         handleClick() {
             axios.delete('api/logout');
             socket.disconnect()
-            this.$store.dispatch("user", null);
-            this.$store.dispatch("posts", []);
-            this.$store.dispatch("page", 1)
-            this.$store.dispatch("myPosts", []);
-            this.$store.dispatch("friends", {followers: [], following: []});
+            this.$store.commit("resetState");
 
             this.$router.push('/login');
         }

@@ -5,6 +5,7 @@ const Post = require("../models/MongoPost");
 const User = require("../models/MongoUser");
 const { fetchPostDetails } = require("../utils/postDetails");
 const { fetchQuoteData } = require("../utils/postDetails");
+
 router.get("/", requeireAuth, async (req, res) => {
   const { id } = req.user;
 
@@ -50,7 +51,15 @@ router.post("/", requeireAuth, async (req, res) => {
     const user = await User.findById(req.user.id);
 
     user.posts.push(post);
+    user.homePagePosts.push(post);
     await user.save();
+
+    const followersId = user.followers;
+    const followers = await User.find({ _id: { $in: followersId } });
+    followers.map(async (follower) => {
+      follower.homePagePosts.push(post);
+      await follower.save();
+    });
 
     let reference = null;
 
@@ -90,30 +99,56 @@ router.post("/", requeireAuth, async (req, res) => {
 
 router.get("/home", requeireAuth, async (req, res) => {
   const { id } = req.user;
-  ///
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
+  const firstDate = req.query.firstDate;
 
-  console.log(id);
-  try {
-    let user = await User.findById(id).populate("following");
-    let userIds = [id, ...user.following.map((user) => user.id)];
-    let posts = await Post.find({ user_id: { $in: userIds } })
-      .sort({ date: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const postsDetails = await fetchPostDetails(posts);
-    res.status(200).json({
-      posts: postsDetails,
-    });
-  } catch (error) {
-    console.error(new Error(error));
-    res.status(500).json({
-      error: error.message,
-    });
+  let me = await User.findById(id);
+  let posts = [];
+  if (!firstDate) {
+    posts = await Post.find({
+      _id: { $in: me.homePagePosts },
+    })
+      .sort({
+        date: -1,
+      })
+      .limit(5);
+  } else {
+    posts = await Post.find({
+      _id: { $in: me.homePagePosts },
+      date: { $lt: firstDate },
+    })
+      .sort({
+        date: -1,
+      })
+      .limit(5);
   }
+
+  const postsDetails = await fetchPostDetails(posts);
+  res.status(200).json({
+    posts: postsDetails,
+  });
+});
+
+router.get("/home/after", requeireAuth, async (req, res) => {
+  const { id } = req.user;
+  const lastDate = req.query.lastDate;
+  let me = await User.findById(id);
+  let posts = await Post.find({
+    _id: { $in: me.homePagePosts },
+    date: { $gt: lastDate },
+  })
+    .sort({
+      date: 1,
+    })
+    .limit(5);
+
+  const postSorted = posts.sort((a, b) => {
+    return b.date - a.date;
+  });
+
+  const postsDetails = await fetchPostDetails(postSorted);
+  res.status(200).json({
+    posts: postsDetails,
+  });
 });
 
 router.get("/:id", requeireAuth, async (req, res) => {
@@ -170,6 +205,21 @@ router.get("/:id", requeireAuth, async (req, res) => {
       comments: comments.sort((a, b) => {
         return b.date - a.date;
       }),
+    });
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Post.findByIdAndDelete(id);
+    res.status(200).json({
+      message: "Post deleted successfully",
     });
   } catch (error) {
     console.error(new Error(error));

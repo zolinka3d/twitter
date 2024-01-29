@@ -5,7 +5,7 @@
   <div class="container">
    
     <ul class="alert-custom">
-      <li v-for="event in state.postEvents" :key="event.id" class="list-group-item">
+      <li v-for="event in state.banEvents" :key="event.id" class="list-group-item">
         <Alert :message="event.message" />
       </li>
     </ul>
