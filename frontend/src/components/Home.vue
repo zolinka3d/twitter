@@ -18,7 +18,7 @@
         </div>
         
         <div v-else-if="posts.length > 0">
-            <Posts :posts="posts"/>
+            <Posts :posts="posts" @setPostRef="handleSetPostRef"/>
         </div>
         
         <button v-if="!allPostsLoaded && posts.length > 0" @click.prevent="fetchPosts" class="btn btn-primary">Load more</button>
@@ -33,7 +33,6 @@ import axios from 'axios';
 import { mapGetters } from 'vuex';
 import NewPost from './posts/NewPost.vue';
 import Posts from './posts/Posts.vue';
-import store from '../store';
 import {state} from '../socket/socket'
 
 
@@ -51,7 +50,9 @@ export default {
             error: null,
             // page: 1
             postsPerPage: 5,
-            allPostsLoaded: false
+            allPostsLoaded: false,
+            bufforPost: null,
+            postRefs: {}
         }
     },
     setup(){
@@ -105,9 +106,10 @@ export default {
         },
         async reload(){
             this.allPostsLoaded = false;
-            this.$store.dispatch('posts', []);
-            this.$store.dispatch("page", 1)
-            await this.fetchPosts();
+            state.postEvents = [];
+
+            const response = await axios.get(`api/posts/home`);
+            this.$store.dispatch('posts', response.data.posts);
         },
 
         goUp(){
@@ -117,8 +119,13 @@ export default {
             });
             state.postEvents = [];
         },
-
+        handleSetPostRef({ id, el }) {
+            this.postRefs[id] = el;
+        },
         async loadAfter(){
+            this.bufforPost = this.$store.state.firstPost;
+           
+
             const response = await axios.get(`api/posts/home/after`,
             {
                 params:{
@@ -128,6 +135,17 @@ export default {
 
             this.$store.dispatch('posts', [...response.data.posts, ...this.posts]);
             state.postEvents = [];
+
+            this.$nextTick(() => {
+                const firstPostElement = this.postRefs[this.bufforPost.id];
+                if (firstPostElement) {
+                    const height = firstPostElement.offsetTop;
+                    window.scrollTo({
+                        top: height,
+                        behavior: 'smooth'
+                    });
+                }
+            });
         }
     },
 

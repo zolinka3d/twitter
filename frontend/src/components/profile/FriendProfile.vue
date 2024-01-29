@@ -49,7 +49,7 @@ export default {
                 this.banned = true;
             }
             this.otherUser = response.data.user;
-        }catch(error){
+        } catch(error){
             console.log(error);
             this.otherUser = null;
         }
@@ -68,9 +68,9 @@ export default {
                 this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})
 
 
-                const response = await axios.get(`/api/posts/home`);
-                this.$store.commit('resetPage')
-                this.$store.dispatch('posts', response.data.posts);
+                // const response = await axios.get(`/api/posts/home`);
+                // this.$store.commit('resetPage')
+                // this.$store.dispatch('posts', response.data.posts);
 
             } catch (error) {
                 console.log(error);
@@ -83,8 +83,8 @@ export default {
                 const friendsResponse = await axios.get('api/followers')
                 this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})
 
-                const response = await axios.get(`/api/posts/home`);
-                this.$store.dispatch('posts', response.data.posts);
+                // const response = await axios.get(`/api/posts/home`);
+                // this.$store.dispatch('posts', response.data.posts);
                 
             } catch (error) {
                 console.log(error);
@@ -101,8 +101,8 @@ export default {
                 const friendsResponse = await axios.get('api/followers')
                 this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})
 
-                const response = await axios.get(`/api/posts/home`);
-                this.$store.dispatch('posts', response.data.posts);
+                // const response = await axios.get(`/api/posts/home`);
+                // this.$store.dispatch('posts', response.data.posts);
                 
             } catch (error) {
                 console.log(error);
@@ -116,8 +116,8 @@ export default {
                 const friendsResponse = await axios.get('api/followers')
                 this.$store.dispatch("friends", {followers: friendsResponse.data.user.followers, following: friendsResponse.data.user.following})
 
-                const response = await axios.get(`/api/posts/home`);
-                this.$store.dispatch('posts', response.data.posts);
+                // const response = await axios.get(`/api/posts/home`);
+                // this.$store.dispatch('posts', response.data.posts);
                 
             } catch (error) {
                 console.log(error);

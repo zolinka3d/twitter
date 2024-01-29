@@ -92,5 +92,14 @@ export default createStore({
     lastPost(state, lastPost) {
       state.lastPost = lastPost;
     },
+    resetState(state) {
+      state.user = null;
+      state.friends = { followers: [], following: [] };
+      state.posts = [];
+      state.myPosts = [];
+      state.page = 1;
+      state.firstPost = null;
+      state.lastPost = null;
+    },
   },
 });

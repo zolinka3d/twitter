@@ -4,6 +4,7 @@
             v-for="post in posts"
             :key="post.id"
             class="list-group-item"
+            :ref="el => postRef(post, el)"
         >
             <Post :post="post" />
         </li>
@@ -26,6 +27,13 @@ export default {
   components: {
     Post,
   },
+  methods: {
+    postRef(post, el) {
+        if (el) {
+            this.$emit('setPostRef', { id: post.id, el });
+        }
+    }
+}
 };
 
 </script>
