@@ -42,7 +42,7 @@ socket.on("ban", (ban) => {
   console.log("ban from ", ban.from);
   console.log("ban userId ", ban.userId);
 
-  store.commit("removeUserPosts", ban.from);
+  // store.commit("removeUserPosts", ban.from);
   store.commit("removeFriend", ban.from);
 
   setTimeout(() => {

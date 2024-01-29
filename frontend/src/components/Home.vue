@@ -136,7 +136,7 @@ export default {
             this.$store.dispatch('posts', [...response.data.posts, ...this.posts]);
             state.postEvents = [];
 
-            this.$nextTick(() => {
+            this.$nextTick(() => { // waiting for DOM to render
                 const firstPostElement = this.postRefs[this.bufforPost.id];
                 if (firstPostElement) {
                     const height = firstPostElement.offsetTop;
