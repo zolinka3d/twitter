@@ -1,4 +1,4 @@
-# tokarczyk-zofia-projekt
+# Twitter / X
 
 ## Project setup
 1. Configure mongo database
