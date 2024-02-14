@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" v-if="friends">
         <SearchFriend />
         <div class="row">
             <div class="col-md-6">
@@ -19,6 +19,9 @@
                 </ul>
             </div>
         </div>
+    </div>
+    <div v-else>
+        <h3>Please log in</h3>
     </div>
 </template>
 
@@ -40,7 +43,3 @@
     }
 
 </script>
-
-<style>
-
-</style>

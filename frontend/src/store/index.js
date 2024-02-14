@@ -3,10 +3,7 @@ import { createStore } from "vuex";
 export default createStore({
   state: {
     user: null,
-    friends: {
-      followers: [],
-      following: [],
-    },
+    friends: null,
     posts: [],
     myPosts: [],
     page: 1,

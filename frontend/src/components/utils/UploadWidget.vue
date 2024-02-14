@@ -73,7 +73,7 @@ export default {
     mounted() {
         try {
             this.widget = window.cloudinary.createUploadWidget(
-            { cloud_name: "dwplyolgd", upload_preset: "upload_vue" },
+            { cloud_name: import.meta.env.VITE_API_CLOUD_NAME, upload_preset: "upload_vue" },
             (error, result) => {
                 if (!error && result) {
                     this.error = null;
